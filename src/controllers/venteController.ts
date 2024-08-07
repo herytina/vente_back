@@ -10,19 +10,21 @@ const convertToSqlArray = (arr: number[]): string => {
 
 export const getVentes = async (req: Request, res: Response) => {
     const [rows] = await pool.query('SELECT * FROM ventes');
-    const ventes: Vente[] = rows.map((row: any) => ({
-        ...row,
-        idProdEn: JSON.parse(row.idProdEn)
-    }));
+    const ventes = rows as Vente[]
+    // const ventes: Vente[] = rows.map((row: any) => ({
+    //     ...row,
+    //     idProdEn: JSON.parse(row.idProdEn)
+    // }));
     res.json(ventes);
 };
 
 export const getVenteById = async (req: Request, res: Response) => {
     const [rows] = await pool.query('SELECT * FROM ventes WHERE id = ?', [req.params.id]);
-    const ventes: Vente[] = rows.map((row: any) => ({
-        ...row,
-        idProdEn: JSON.parse(row.idProdEn)
-    }));
+    const ventes = rows as Vente[]
+    // const ventes: Vente[] = vente.map((row: Vente) => ({
+    //     ...row,
+    //     idProdEn: JSON.parse(row.idProdEn)
+    // }));
     if (ventes.length === 0) {
         return res.status(404).send('Vente not found');
     }
@@ -33,15 +35,15 @@ export const createVente = async (req: Request, res: Response) => {
     const { idCli, idProdEn, idSociete } = req.body;
     const idProdEnStr = convertToSqlArray(idProdEn);
     const [result] = await pool.query('INSERT INTO ventes (idCli, idProdEn, idSociete) VALUES (?, ?, ?)', [idCli, idProdEnStr, idSociete]);
-    const newVente: Vente = { id: (result as any).insertId, idCli, idProdEn, idSociete };
-    res.status(201).json(newVente);
+    // const newVente: Vente = { id: (result as any).insertId, idCli, idProdEn, idSociete };
+    res.status(201).json(result);
 };
 
 export const updateVente = async (req: Request, res: Response) => {
     const { idCli, idProdEn, idSociete } = req.body;
     const idProdEnStr = convertToSqlArray(idProdEn);
     const [result] = await pool.query('UPDATE ventes SET idCli = ?, idProdEn = ?, idSociete = ? WHERE id = ?', [idCli, idProdEnStr, idSociete, req.params.id]);
-    if ((result as any).affectedRows === 0) {
+    if (!result) {
         return res.status(404).send('Vente not found');
     }
     const updatedVente: Vente = { id: parseInt(req.params.id), idCli, idProdEn, idSociete };
@@ -50,7 +52,7 @@ export const updateVente = async (req: Request, res: Response) => {
 
 export const deleteVente = async (req: Request, res: Response) => {
     const [result] = await pool.query('DELETE FROM ventes WHERE id = ?', [req.params.id]);
-    if ((result as any).affectedRows === 0) {
+    if (!result) {
         return res.status(404).send('Vente not found');
     }
     res.status(204).send();

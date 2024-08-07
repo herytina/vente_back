@@ -21,8 +21,7 @@ export const getSocieteById = async (req: Request, res: Response) => {
 export const createSociete = async (req: Request, res: Response) => {
     const { nom, nifStat } = req.body;
     const [result] = await pool.query('INSERT INTO societes (nom, nifStat) VALUES (?, ?)', [nom, nifStat]);
-    const newSociete: Societe = { id: (result as any).insertId, nom, nifStat };
-    res.status(201).json(newSociete);
+    res.status(201).json(result);
 };
 
 export const updateSociete = async (req: Request, res: Response) => {

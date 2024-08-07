@@ -18,26 +18,21 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-    const { name, price, nbStock } = req.body;
-    const [result] = await pool.query('INSERT INTO products (name, price, nbStock) VALUES (?, ?, ?)', [name, price, nbStock]);
+    const { name,quantiter, price, stock } = req.body;
+    const [result] = await pool.query('INSERT INTO products (name,quantiter, price, stock) VALUES (?, ?, ?, ?)', [name, quantiter, price, stock]);
     res.status(201).json({result});
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
-    const { name, price, nbStock } = req.body;
-    const [result] = await pool.query('UPDATE products SET name = ?, price = ?, nbStock = ? WHERE id = ?', [name, price, nbStock, req.params.id]);
-    const products: Product[] = result as Product[];
-    if (products) {
+    const { name,quantiter, price, stock } = req.body;
+    const result = await pool.query('UPDATE products SET name = ?, quantiter = ?, price = ?, stock = ? WHERE id = ?', [name,quantiter, price, stock, req.params.id]);
+    if (!result) {
         return res.status(404).send('Product not found');
     }
-    res.json({ id: req.params.id, name, price, nbStock });
+    res.json({ id: req.params.id, name,quantiter, price, stock });
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
-    const [result] = await pool.query('DELETE FROM products WHERE id = ?', [req.params.id]);
-    const products: Product[] = result as Product[];
-    if (products) {
-        return res.status(404).send('Product not found');
-    }
-    res.status(204).send();
+    const result = await pool.query('DELETE FROM products WHERE id = ?', [req.params.id]);
+    res.status(204).send(result);
 };
