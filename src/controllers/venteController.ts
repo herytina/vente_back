@@ -1,6 +1,6 @@
 // src/controllers/venteController.ts
 import { Request, Response } from 'express';
-import pool from '../dbConfig';
+import pool from '../utils/dbConfig';
 import { Vente } from '../models/vente';
 
 // Helper function to convert JSON array to SQL array
@@ -11,20 +11,12 @@ const convertToSqlArray = (arr: number[]): string => {
 export const getVentes = async (req: Request, res: Response) => {
     const [rows] = await pool.query('SELECT * FROM ventes');
     const ventes = rows as Vente[]
-    // const ventes: Vente[] = rows.map((row: any) => ({
-    //     ...row,
-    //     idProdEn: JSON.parse(row.idProdEn)
-    // }));
     res.json(ventes);
 };
 
 export const getVenteById = async (req: Request, res: Response) => {
     const [rows] = await pool.query('SELECT * FROM ventes WHERE id = ?', [req.params.id]);
     const ventes = rows as Vente[]
-    // const ventes: Vente[] = vente.map((row: Vente) => ({
-    //     ...row,
-    //     idProdEn: JSON.parse(row.idProdEn)
-    // }));
     if (ventes.length === 0) {
         return res.status(404).send('Vente not found');
     }
@@ -34,8 +26,8 @@ export const getVenteById = async (req: Request, res: Response) => {
 export const createVente = async (req: Request, res: Response) => {
     const { idCli, idProdEn, idSociete } = req.body;
     const idProdEnStr = convertToSqlArray(idProdEn);
-    const [result] = await pool.query('INSERT INTO ventes (idCli, idProdEn, idSociete) VALUES (?, ?, ?)', [idCli, idProdEnStr, idSociete]);
-    // const newVente: Vente = { id: (result as any).insertId, idCli, idProdEn, idSociete };
+    const date = new Date().toLocaleDateString()
+    const [result] = await pool.query('INSERT INTO ventes (idCli, idProdEn, idVendeur, createdDate) VALUES (?, ?, ?, ?)', [idCli, idProdEnStr, idSociete, date]);
     res.status(201).json(result);
 };
 

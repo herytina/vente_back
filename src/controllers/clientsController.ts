@@ -1,6 +1,6 @@
 // src/controllers/societeController.ts
 import { Request, Response } from 'express';
-import pool from '../dbConfig';
+import pool from '../utils/dbConfig';
 import { Clients } from '../models/clients';
 
 export const getClients = async (req: Request, res: Response) => {
@@ -19,14 +19,14 @@ export const getClientById = async (req: Request, res: Response) => {
 };
 
 export const createClient = async (req: Request, res: Response) => {
-    const { nom, prenom, tel, adresse, nifStat } = req.body;
-    const [result] = await pool.query('INSERT INTO clients (nom, prenom, tel, adresse, nifStat) VALUES (?, ?, ?, ?, ?)', [nom, prenom, tel, adresse, nifStat]);
+    const { nom, prenom, mail, code, ville, region, tel, adresse,codePostal, nif, stat, idVendeur } = req.body;
+    const [result] = await pool.query('INSERT INTO clients (nom, prenom, mail, code, ville, region, tel, adresse, codePostal, nif, stat, vendeur) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [nom, prenom, mail, code, ville, region, tel, adresse,codePostal, nif, stat, idVendeur]);
     res.status(201).json(result);
 };
 
 export const updateClient = async (req: Request, res: Response) => {
-    const { nom } = req.body;
-    const [result] = await pool.query('UPDATE clients SET nom = ? WHERE id = ?', [nom, req.params.id]);
+    const { nom, prenom, mail, code, ville, region, tel, adresse,codePostal, nif, stat, idVendeur  } = req.body;
+    const [result] = await pool.query('UPDATE clients SET nom = ?, prenom = ?,mail = ?,code = ?,ville = ?,region = ?,tel = ?,adresse = ?,codePostal = ?,nif = ?,stat = ?, vendeur = ? WHERE id = ?', [nom, prenom, mail, code, ville, region, tel, adresse,codePostal, nif, stat, idVendeur , req.params.id]);
     if (!result) {
         return res.status(404).send('Clients not found');
     }

@@ -1,6 +1,6 @@
 // src/controllers/userController.ts
 import { Request, Response } from 'express';
-import pool from '../dbConfig';
+import pool from '../utils/dbConfig';
 import { User } from '../models/user';
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
     const { nom, prenom, tel, mail, pwd, idSociete, adresse, type } = req.body;
-    const [result] = await pool.query('INSERT INTO users (nom, prenom, tel, mail, pwd, idSociete, adresse, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [nom, prenom, tel, mail, pwd, idSociete, adresse, type]);
+    const [result] = await pool.query('INSERT INTO users (nom, prenom, tel, mail, pwd, societe, secteur, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [nom, prenom, tel, mail, pwd, idSociete, adresse, type]);
     // const newUser: User = { id: (result as any).insertId, nom, prenom, tel, mail, pwd, idSociete, adresse, type };
     res.status(201).json(result);
 };

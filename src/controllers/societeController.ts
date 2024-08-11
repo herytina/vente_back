@@ -1,6 +1,6 @@
 // src/controllers/societeController.ts
 import { Request, Response } from 'express';
-import pool from '../dbConfig';
+import pool from '../utils/dbConfig';
 import { Societe } from '../models/societe';
 
 export const getSocietes = async (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ export const getSocieteById = async (req: Request, res: Response) => {
 
 export const createSociete = async (req: Request, res: Response) => {
     const { nom, nifStat } = req.body;
-    const [result] = await pool.query('INSERT INTO societes (nom, nifStat) VALUES (?, ?)', [nom, nifStat]);
+    const [result] = await pool.query('INSERT INTO societes (nom,adresse, ville, tel, nif, Stat) VALUES (?, ?)', [nom, nifStat]);
     res.status(201).json(result);
 };
 

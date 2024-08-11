@@ -1,6 +1,6 @@
 // src/controllers/productController.ts
 import { Request, Response } from 'express';
-import pool from '../dbConfig';
+import pool from '../utils/dbConfig';
 import { Product } from '../models/produits';
 
 export const getProducts = async (req: Request, res: Response) => {
@@ -18,18 +18,18 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-    const { name,quantiter, price, stock } = req.body;
-    const [result] = await pool.query('INSERT INTO products (name,quantiter, price, stock) VALUES (?, ?, ?, ?)', [name, quantiter, price, stock]);
+    const { name,quantiter, price, poids, totalQuantiter } = req.body;
+    const [result] = await pool.query('INSERT INTO products (name,quantiter, price, poids, totalQuantiter) VALUES (?, ?, ?, ?, ?)', [name, quantiter, price, poids, totalQuantiter]);
     res.status(201).json({result});
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
-    const { name,quantiter, price, stock } = req.body;
-    const result = await pool.query('UPDATE products SET name = ?, quantiter = ?, price = ?, stock = ? WHERE id = ?', [name,quantiter, price, stock, req.params.id]);
+    const { name,quantiter, price, poids, totalQuantiter } = req.body;
+    const result = await pool.query('UPDATE products SET name = ?, quantiter = ?, price = ?, poids = ?, totalQuantiter = ? WHERE id = ?', [name,quantiter, price, poids, totalQuantiter, req.params.id]);
     if (!result) {
         return res.status(404).send('Product not found');
     }
-    res.json({ id: req.params.id, name,quantiter, price, stock });
+    res.json({ id: req.params.id, name,quantiter, price, poids, totalQuantiter });
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
